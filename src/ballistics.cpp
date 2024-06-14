@@ -466,6 +466,15 @@ dealt_projectile_attack projectile_attack( const projectile &proj_arg, const tri
         } else if( in_veh != nullptr && veh_pointer_or_null( here.veh_at( tp ) ) == in_veh ) {
             // Don't do anything, especially don't call map::shoot as this would damage the vehicle
         } else {
+            if( proj.count > 1 ) {
+                if( rl_dist( source, tp ) > 1 ) {
+                    attack.proj.impact = attack.proj.shot_impact;
+                } else {
+                    // Track that we hit an obstacle while wadded up,
+                    // to cancel out of applying the other projectiles.
+                    attack.proj.count = 1;
+                }
+            }
             here.shoot( tp, proj, !no_item_damage && tp == target );
             has_momentum = proj.impact.total_damage() > 0;
         }
